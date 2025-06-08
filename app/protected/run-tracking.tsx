@@ -4,6 +4,7 @@ import { formatTime } from "@/utils/time";
 import * as Location from "expo-location";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Alert,
   Dimensions,
   StyleSheet,
   Text,
@@ -38,7 +39,10 @@ export default function RunTrackingScreen() {
   const startTracking = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      console.warn("Permission to access location was denied");
+      Alert.alert(
+        "Permission denied",
+        "Location access is required to use this feature."
+      );
       return;
     }
     locationSubscription.current = await Location.watchPositionAsync(

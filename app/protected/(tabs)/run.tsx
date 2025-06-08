@@ -1,70 +1,92 @@
-import StartRunFallback from '@/components/StartRunFallback';
-import * as Location from 'expo-location';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
-import type { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '@/components/model/Navigation';
+import StartRunFallback from "@/components/StartRunFallback";
+import * as Location from "expo-location";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import MapView, { Marker, Region } from "react-native-maps";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "@/components/model/Navigation";
 
-
-
-type StartRunNav = StackNavigationProp<RootStackParamList, 'StartRun'>;
+type StartRunNav = StackNavigationProp<RootStackParamList, "StartRun">;
 
 export default function StartRunScreen() {
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null
+  );
   const [region, setRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const navigation = useNavigation<StartRunNav>();
 
-  if (Platform.OS === 'web') {
+  if (Platform.OS === "web") {
     return <StartRunFallback />;
   }
 
+  const fetchLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission denied",
+        "Location access is required to use this feature."
+      );
+      return;
+    }
+
+    const currentLocation = await Location.getCurrentPositionAsync({});
+    setLocation(currentLocation);
+
+    const initialRegion: Region = {
+      latitude: currentLocation.coords.latitude,
+      longitude: currentLocation.coords.longitude,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005,
+    };
+
+    setRegion(initialRegion);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission denied', 'Location access is required to use this feature.');
-        return;
-      }
-
-      const currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation);
-
-      const initialRegion: Region = {
-        latitude: currentLocation.coords.latitude,
-        longitude: currentLocation.coords.longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      };
-
-      setRegion(initialRegion);
-      setLoading(false);
-    })();
+    fetchLocation();
   }, []);
 
   const handleStartRun = () => {
     if (location) {
-       navigation.navigate('run-tracking', {
-      startLocation: location.coords,
-    });
+      navigation.navigate("run-tracking", {
+        startLocation: location.coords,
+      });
     } else {
-      Alert.alert('Location not available', 'Please wait while we fetch your location.');
+      Alert.alert(
+        "Location not available",
+        "Please wait while we fetch your location."
+      );
     }
   };
 
   return (
     <View style={styles.container}>
       {region ? (
-        <MapView style={styles.map} region={region} showsUserLocation showsMyLocationButton>
+        <MapView
+          style={styles.map}
+          region={region}
+          showsUserLocation
+          showsMyLocationButton
+        >
           <Marker coordinate={region} title="You" />
         </MapView>
       ) : (
         <View style={styles.loadingMap}>
           <ActivityIndicator size="large" color="#ff6b00" />
-          <Text style={{ color: '#666', marginTop: 10 }}>Loading map...</Text>
+          <Text style={{ color: "#666", marginTop: 10 }}>Loading map...</Text>
         </View>
       )}
 
@@ -75,29 +97,29 @@ export default function StartRunScreen() {
   );
 }
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: { flex: 1, marginBottom: 50 },
   map: { flex: 1 },
   loadingMap: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   startButton: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 40,
-    alignSelf: 'center',
-    backgroundColor: '#ff6b00',
+    alignSelf: "center",
+    backgroundColor: "#ff6b00",
     paddingVertical: 16,
     paddingHorizontal: 60,
     borderRadius: 50,
     elevation: 5,
   },
   startText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
