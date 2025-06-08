@@ -10,6 +10,8 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { SessionProvider } from "@/contexts/AuthContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { StyleSheet } from "react-native";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -23,6 +25,8 @@ export default function RootLayout() {
   }
 
   return (
+        <GestureHandlerRootView style={styles.container}>
+
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <SessionProvider>
         <Slot />
@@ -33,5 +37,10 @@ export default function RootLayout() {
         <StatusBar style="auto" />
       </SessionProvider>
     </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+});
