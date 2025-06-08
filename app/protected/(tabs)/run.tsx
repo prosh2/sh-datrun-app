@@ -1,4 +1,7 @@
+import { RootStackParamList } from "@/components/model/Navigation";
 import StartRunFallback from "@/components/StartRunFallback";
+import { useNavigation } from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,10 +15,6 @@ import {
   View,
 } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
-import type { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "@/components/model/Navigation";
 
 type StartRunNav = StackNavigationProp<RootStackParamList, "StartRun">;
 

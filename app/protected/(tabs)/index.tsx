@@ -25,7 +25,7 @@ export default function HomeScreen() {
       <View style={styles.actions}>
         <TouchableOpacity>
           <AntDesign name="like2" size={20} color="#555">
-          <Text>{item.likes}</Text>
+            <Text>{item.likes}</Text>
           </AntDesign>
         </TouchableOpacity>
         <TouchableOpacity>

@@ -4,14 +4,14 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Slot, Stack } from "expo-router";
+import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { SessionProvider } from "@/contexts/AuthContext";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { StyleSheet } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -25,18 +25,17 @@ export default function RootLayout() {
   }
 
   return (
-        <GestureHandlerRootView style={styles.container}>
-
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SessionProvider>
-        <Slot />
-        {/* <Stack>  Uncomment this to use tab navigation animation
+    <GestureHandlerRootView style={styles.container}>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <SessionProvider>
+          <Slot />
+          {/* <Stack>  Uncomment this to use tab navigation animation
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack> */}
-        <StatusBar style="auto" />
-      </SessionProvider>
-    </ThemeProvider>
+          <StatusBar style="auto" />
+        </SessionProvider>
+      </ThemeProvider>
     </GestureHandlerRootView>
   );
 }

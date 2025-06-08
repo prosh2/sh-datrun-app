@@ -1,6 +1,6 @@
 import { Redirect, Tabs } from "expo-router";
 import React from "react";
-import { Platform, StyleSheet, TouchableOpacity } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
 import { ThemedText } from "@/components/ThemedText";
@@ -9,7 +9,7 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useSession } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -61,7 +61,7 @@ export default function TabLayout() {
         options={{
           title: "Run",
           tabBarIcon: ({ color }) => (
-           <FontAwesome5 name="running" size={24} color={color} />
+            <FontAwesome5 name="running" size={24} color={color} />
           ),
         }}
       />
