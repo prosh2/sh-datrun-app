@@ -7,3 +7,8 @@ export type RootStackParamList = {
     };
   };
 };
+
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
