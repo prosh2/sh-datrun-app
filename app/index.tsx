@@ -8,5 +8,5 @@ export default function Index() {
   if (!session) {
     return <Redirect href="/(auth)/login" />;
   }
-  return <Redirect href="/protected/(tabs)/home" />;
+  return <Redirect href="/(protected)/(tabs)" />;
 }

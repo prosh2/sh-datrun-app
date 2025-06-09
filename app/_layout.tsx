@@ -12,6 +12,7 @@ import { SessionProvider } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SplashScreenController } from "@/components/Splash";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -28,6 +29,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.container}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <SessionProvider>
+          <SplashScreenController />
           <Slot />
           <StatusBar style="auto" />
         </SessionProvider>

@@ -18,14 +18,15 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 
 export default function LoginPage() {
-  const { login } = useSession();
+  const { storeToken } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.replace("/protected/(tabs)/home");
+      storeToken();
+      router.replace("/(protected)/(tabs)");
       console.log("User logged in successfully");
     } catch (error: any) {
       Alert.alert("Login Failed", error.message);
@@ -41,7 +42,8 @@ export default function LoginPage() {
       );
       const user = userCredential.user;
       console.log("User created:", user.uid);
-      router.replace("/protected/(tabs)/home"); // Navigate to home after signup
+      storeToken();
+      router.replace("/(protected)/(tabs)"); // Navigate to home after signup
       // Optionally store user info, navigate, etc.
     } catch (error: any) {
       console.error("Error signing up:", error.code, error.message);

@@ -16,14 +16,14 @@ import {
 import { Alert } from "react-native";
 
 const AuthContext = createContext<{
-  login: () => void;
-  logout: () => void;
+  storeToken: () => void;
+  revokeToken: () => void;
   session?: string | null;
   isLoading: boolean;
   user: User | null;
 }>({
-  login: () => null,
-  logout: () => null,
+  storeToken: () => null,
+  revokeToken: () => null,
   session: null,
   isLoading: false,
   user: null,
@@ -51,12 +51,12 @@ export function SessionProvider({ children }: PropsWithChildren) {
   return (
     <AuthContext
       value={{
-        login: () => {
+        storeToken: () => {
           // Perform sign-in logic here potentially using Firebase or another auth provider
           // For example, you might use Firebase Auth to sign in a user
-          setSession("xxx");
+          auth.currentUser?.getIdToken().then((token) => setSession(token));
         },
-        logout: async () => {
+        revokeToken: async () => {
           await signOut(auth);
           setSession(null);
         },

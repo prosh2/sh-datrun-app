@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 export default {
   expo: {
+    scheme: "com.prosh2.datrun",
     extra: {
       firebaseApiKey: process.env.FIREBASE_API_KEY,
       firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN,

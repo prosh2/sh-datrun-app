@@ -1,14 +1,11 @@
-import { Image } from "expo-image";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-
-import { useSession } from "@/contexts/AuthContext";
-import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import { FlatList, Text } from "react-native-gesture-handler";
 import { samplePosts } from "@/constants/Data";
-import { Post } from "@/components/model/Post";
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-export default function HomeScreen() {
-  const { logout } = useSession();
+import { Post } from "./model/Post";
+import { FlatList, Text } from "react-native-gesture-handler";
+
+export default function FeedComponent() {
   const renderPost = ({ item }: { item: Post }) => (
     <View style={styles.card}>
       <View style={styles.header}>
@@ -19,7 +16,7 @@ export default function HomeScreen() {
       <Text style={styles.caption}>{item.caption}</Text>
       <View style={styles.stats}>
         <Text style={styles.statText}>🏃 {item.distance}</Text>
-        <Text style={styles.statText}>⏱️ {item.time}</Text>
+        <Text style={styles.statText}>⏱️ {item.datetime}</Text>
         <Text style={styles.statText}>📍 {item.location}</Text>
       </View>
       <View style={styles.actions}>
@@ -41,7 +38,6 @@ export default function HomeScreen() {
       </View>
     </View>
   );
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Feed</Text>
@@ -55,56 +51,6 @@ export default function HomeScreen() {
     </View>
   );
 }
-
-// return (
-//   <ParallaxScrollView
-//     headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-//     headerImage={
-//       <Image
-//         source={require("@/assets/images/partial-react-logo.png")}
-//         style={styles.reactLogo}
-//       />
-//     }
-//   >
-//     <ThemedView style={styles.titleContainer}>
-//       <ThemedText type="title">Home Page!</ThemedText>
-//       <HelloWave />
-//     </ThemedView>
-//     <ThemedView style={styles.stepContainer}>
-
-//       <ThemedText
-//         onPress={() => {
-//           // The `app/(app)/_layout.tsx` will redirect to the sign-in screen.
-//           signOut();
-//         }}>
-//         Sign Out
-//       </ThemedText>
-//       <ThemedText>Click to navigate to nested route</ThemedText>
-//       <Link href="/protected/profile">Navigate to nested route</Link>
-//     </ThemedView>
-//   </ParallaxScrollView>
-// );
-// }
-
-// const styles = StyleSheet.create({
-//   titleContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     gap: 8,
-//   },
-//   stepContainer: {
-//     gap: 8,
-//     marginBottom: 8,
-//   },
-//   reactLogo: {
-//     height: 178,
-//     width: 290,
-//     bottom: 0,
-//     left: 0,
-//     position: "absolute",
-//   },
-// });
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
