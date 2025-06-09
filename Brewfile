@@ -1,0 +1,3 @@
+# Brewfile
+
+brew "pre-commit"

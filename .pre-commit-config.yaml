@@ -1,0 +1,24 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+      - id: check-yaml
+
+  - repo: https://github.com/detailyang/prettier-pre-commit-hook
+    rev: v1.0.0
+    hooks:
+      - id: prettier
+        name: prettier-ts
+        entry: prettier --write
+        language: node
+        types: [ts, tsx, json, css, md, yaml]
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.57.0
+    hooks:
+      - id: eslint
+        args: ["--ext", ".ts,.tsx"]
+        types: [ts, tsx]
