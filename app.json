@@ -9,6 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+       "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We use your location to track your runs.",
+        "NSCameraUsageDescription": "We use the camera to let you take running selfies.",
+        "NSPhotoLibraryUsageDescription": "We need photo access to upload run photos."
+      },
       "supportsTablet": true
     },
     "android": {

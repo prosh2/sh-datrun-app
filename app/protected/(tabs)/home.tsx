@@ -8,7 +8,7 @@ import { samplePosts } from "@/constants/Data";
 import { Post } from "@/components/model/Post";
 
 export default function HomeScreen() {
-  const { signOut } = useSession();
+  const { logout } = useSession();
   const renderPost = ({ item }: { item: Post }) => (
     <View style={styles.card}>
       <View style={styles.header}>

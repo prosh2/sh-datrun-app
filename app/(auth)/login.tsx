@@ -1,7 +1,14 @@
 import { useSession } from "@/contexts/AuthContext";
+import { auth } from "@/lib/firebase";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { useState } from "react";
+import {
+  Alert,
   ImageBackground,
   StyleSheet,
   Text,
@@ -10,11 +17,43 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
-export default function SignIn() {
-  const { signIn } = useSession();
+export default function LoginPage() {
+  const { login } = useSession();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.replace("/protected/(tabs)/home");
+      console.log("User logged in successfully");
+    } catch (error: any) {
+      Alert.alert("Login Failed", error.message);
+    }
+  };
+
+  const handleSignUp = async (email: string, password: string) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      console.log("User created:", user.uid);
+      router.replace("/protected/(tabs)/home"); // Navigate to home after signup
+      // Optionally store user info, navigate, etc.
+    } catch (error: any) {
+      console.error("Error signing up:", error.code, error.message);
+      // Handle errors like:
+      // auth/email-already-in-use
+      // auth/invalid-email
+      // auth/weak-password
+    }
+  };
   return (
     <ImageBackground
-      source={require("../assets/images/signin-bg.jpg")}
+      source={require("../../assets/images/signin-bg.jpg")}
       style={styles.container}
       blurRadius={2}
       resizeMode="cover" // <-- Add this line
@@ -27,15 +66,19 @@ export default function SignIn() {
           placeholder="Email"
           style={styles.input}
           placeholderTextColor="#ccc"
+          onChangeText={setEmail}
+          value={email}
         />
         <TextInput
           placeholder="Password"
           secureTextEntry
           style={styles.input}
           placeholderTextColor="#ccc"
+          onChangeText={setPassword}
+          value={password}
         />
 
-        <TouchableOpacity style={styles.signInButton}>
+        <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
 
@@ -46,12 +89,7 @@ export default function SignIn() {
           <Text style={styles.socialText}>Continue with Google</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => {
-            signIn();
-            router.replace("/protected");
-          }}
-        >
+        <TouchableOpacity onPress={() => handleSignUp(email, password)}>
           <Text style={styles.signUpText}>
             Don’t have an account?{" "}
             <Text style={{ fontWeight: "bold" }}>Sign Up</Text>

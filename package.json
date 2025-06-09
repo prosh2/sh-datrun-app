@@ -12,10 +12,13 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
+    "@react-navigation/drawer": "^7.4.1",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.10",
     "@react-navigation/stack": "^7.3.3",
+    "dotenv": "^16.5.0",
     "expo": "~53.0.8",
     "expo-auth-session": "~6.2.0",
     "expo-blur": "~14.1.4",
