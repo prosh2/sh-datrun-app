@@ -58,7 +58,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: "#fff",
   },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 16 },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
+    alignSelf: "center",
+  },
   card: {
     backgroundColor: "#f9f9f9",
     borderRadius: 16,
