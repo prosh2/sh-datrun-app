@@ -1,19 +1,17 @@
 // lib/firebase.ts
+import {
+  firebaseApiKey,
+  firebaseAppId,
+  firebaseAuthDomain,
+  firebaseMeasurementId,
+  firebaseMessagingSenderId,
+  firebaseProjectId,
+  firebaseStorageBucket,
+} from "@/constants/Constants";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { getReactNativePersistence, initializeAuth } from "firebase/auth";
-import Constants from "expo-constants";
-
-const {
-  firebaseApiKey,
-  firebaseAuthDomain,
-  firebaseProjectId,
-  firebaseStorageBucket,
-  firebaseMessagingSenderId,
-  firebaseAppId,
-  firebaseMeasurementId,
-} = Constants.expoConfig?.extra || {};
 
 const firebaseConfig = {
   apiKey: firebaseApiKey,

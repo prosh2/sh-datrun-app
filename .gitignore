@@ -53,4 +53,9 @@ expo-env.d.ts
 
 .env
 
+
 *.plist
+google-services.json
+
+/android
+/ios
