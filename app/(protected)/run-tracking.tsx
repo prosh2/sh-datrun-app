@@ -22,7 +22,7 @@ export default function RunTrackingScreen() {
   const [elapsedTime, setElapsedTime] = useState<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const locationSubscription = useRef<Location.LocationSubscription | null>(
-    null
+    null,
   );
 
   // Start timer
@@ -41,7 +41,7 @@ export default function RunTrackingScreen() {
     if (status !== "granted") {
       Alert.alert(
         "Permission denied",
-        "Location access is required to use this feature."
+        "Location access is required to use this feature.",
       );
       return;
     }
@@ -66,7 +66,7 @@ export default function RunTrackingScreen() {
             longitudeDelta: 0.005,
           });
         }
-      }
+      },
     );
   };
 

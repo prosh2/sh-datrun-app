@@ -38,7 +38,7 @@ export default function LoginPage() {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
       console.log("User created:", user.uid);
