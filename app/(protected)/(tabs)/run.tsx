@@ -20,7 +20,7 @@ type StartRunNav = StackNavigationProp<RootStackParamList, "StartRun">;
 
 export default function StartRunScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(
-    null
+    null,
   );
   const [region, setRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,7 +35,7 @@ export default function StartRunScreen() {
     if (status !== "granted") {
       Alert.alert(
         "Permission denied",
-        "Location access is required to use this feature."
+        "Location access is required to use this feature.",
       );
       return;
     }
@@ -66,7 +66,7 @@ export default function StartRunScreen() {
     } else {
       Alert.alert(
         "Location not available",
-        "Please wait while we fetch your location."
+        "Please wait while we fetch your location.",
       );
     }
   };
