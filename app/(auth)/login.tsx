@@ -6,7 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   ImageBackground,
@@ -16,12 +16,37 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import {
+  androidClientId,
+  iOSClientId,
+  webClientId,
+} from "@/constants/Constants";
 
 export default function LoginPage() {
   const { storeToken } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [userInfo, setUserInfo] = useState(null);
 
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: webClientId,
+      iosClientId: iOSClientId,
+      // androidClientId: androidClientId,
+      offlineAccess: true,
+    });
+  }, []);
+
+  async function signInWithGoogle() {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log(userInfo);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -86,7 +111,11 @@ export default function LoginPage() {
 
         <Text style={styles.forgotPassword}>Forgot Password?</Text>
 
-        <TouchableOpacity style={styles.socialButton}>
+        <TouchableOpacity
+          style={styles.socialButton}
+          // onPress={() => promptAsync()}
+          onPress={signInWithGoogle}
+        >
           <AntDesign name="google" size={20} color="#fff" />
           <Text style={styles.socialText}>Continue with Google</Text>
         </TouchableOpacity>
