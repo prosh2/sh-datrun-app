@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useSession } from "@/contexts/AuthContext";
 import { Redirect, Stack } from "expo-router";
+import { Alert } from "react-native";
 
 export default function ProtectedLayout() {
   const { session, isLoading } = useSession();
@@ -18,6 +19,8 @@ export default function ProtectedLayout() {
   if (!session) {
     // On web, static rendering will stop here as the user is not authenticated
     // in the headless Node process that the pages are rendered in.
+    Alert.alert("You are not signed in.");
+
     return <Redirect href="/(auth)/login" />;
   }
 

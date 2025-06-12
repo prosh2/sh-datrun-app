@@ -1,9 +1,18 @@
+import { webClientId } from "@/constants/Constants";
 import { useSession } from "@/contexts/AuthContext";
 import { auth } from "@/lib/firebase";
 import { AntDesign } from "@expo/vector-icons";
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  isSuccessResponse,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
 import { router } from "expo-router";
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithCredential,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useEffect, useState } from "react";
@@ -16,35 +25,53 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import {
-  androidClientId,
-  iOSClientId,
-  webClientId,
-} from "@/constants/Constants";
 
 export default function LoginPage() {
   const { storeToken } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: webClientId,
-      iosClientId: iOSClientId,
-      // androidClientId: androidClientId,
-      offlineAccess: true,
+      offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+      forceCodeForRefreshToken: false, // [Android] related to `serverAuthCode`, read the docs link below *.
+      profileImageSize: 120, // [iOS] The desired height (and width) of the profile image. Defaults to 120px
     });
   }, []);
 
   async function signInWithGoogle() {
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      console.log(userInfo);
+      const response = await GoogleSignin.signIn();
+      if (isSuccessResponse(response)) {
+        const credential = GoogleAuthProvider.credential(response.data.idToken);
+        await signInWithCredential(auth, credential);
+        storeToken();
+        router.replace("/(protected)/(tabs)");
+        console.log("User logged in successfully");
+      } else {
+        // sign in was cancelled by user
+        console.log("cancelled");
+      }
     } catch (error) {
-      console.error(error);
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.IN_PROGRESS:
+            // operation (eg. sign in) already in progress
+            console.log("in progress");
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            // Android only, play services not available or outdated
+            console.log("play services not available");
+            break;
+          default:
+            // some other error happened
+            console.error(error);
+        }
+      } else {
+        // an error that's not related to google sign in occurred
+      }
     }
   }
   const handleLogin = async () => {
@@ -114,7 +141,7 @@ export default function LoginPage() {
         <TouchableOpacity
           style={styles.socialButton}
           // onPress={() => promptAsync()}
-          onPress={signInWithGoogle}
+          onPress={() => signInWithGoogle()}
         >
           <AntDesign name="google" size={20} color="#fff" />
           <Text style={styles.socialText}>Continue with Google</Text>

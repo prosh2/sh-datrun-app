@@ -58,4 +58,7 @@ expo-env.d.ts
 google-services.json
 
 /android
+android/keystores/release.keystore
+credentials
+credentials.json
 /ios
