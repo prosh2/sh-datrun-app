@@ -1,28 +1,84 @@
+import { webClientId } from "@/constants/Constants";
 import { useSession } from "@/contexts/AuthContext";
 import { auth } from "@/lib/firebase";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  isSuccessResponse,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
 import { router } from "expo-router";
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithCredential,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
+  Image,
   ImageBackground,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function LoginPage() {
   const { storeToken } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: webClientId,
+      offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+      forceCodeForRefreshToken: false, // [Android] related to `serverAuthCode`, read the docs link below *.
+      profileImageSize: 120, // [iOS] The desired height (and width) of the profile image. Defaults to 120px
+    });
+  }, []);
+
+  async function signInWithGoogle() {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      if (isSuccessResponse(response)) {
+        const credential = GoogleAuthProvider.credential(response.data.idToken);
+        await signInWithCredential(auth, credential);
+        storeToken();
+        router.replace("/(protected)/(tabs)");
+        console.log("User logged in successfully");
+      } else {
+        // sign in was cancelled by user
+        console.log("cancelled");
+      }
+    } catch (error) {
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.IN_PROGRESS:
+            // operation (eg. sign in) already in progress
+            console.log("in progress");
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            // Android only, play services not available or outdated
+            console.log("play services not available");
+            break;
+          default:
+            // some other error happened
+            console.error(error);
+        }
+      } else {
+        // an error that's not related to google sign in occurred
+      }
+    }
+  }
+  const handleSignInWithEmailAndPassword = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       storeToken();
@@ -33,126 +89,186 @@ export default function LoginPage() {
     }
   };
 
-  const handleSignUp = async (email: string, password: string) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      const user = userCredential.user;
-      console.log("User created:", user.uid);
-      storeToken();
-      router.replace("/(protected)/(tabs)"); // Navigate to home after signup
-      // Optionally store user info, navigate, etc.
-    } catch (error: any) {
-      console.error("Error signing up:", error.code, error.message);
-      // Handle errors like:
-      // auth/email-already-in-use
-      // auth/invalid-email
-      // auth/weak-password
-    }
-  };
   return (
-    <ImageBackground
-      source={require("../../assets/images/signin-bg.jpg")}
-      style={styles.container}
-      blurRadius={2}
-      resizeMode="cover" // <-- Add this line
-    >
-      <View style={styles.overlay}>
-        <Text style={styles.logo}>DatRun</Text>
-        <Text style={styles.tagline}>Find your perfect running partner</Text>
+    <LinearGradient colors={["#34d399", "#059669"]} style={styles.container}>
+      <View style={styles.content}>
+        {/* Logo */}
+        <Image
+          source={require("../../assets/images/prosh2-logo-removebg.png")} //TODO: change to constant
+          style={styles.logo}
+        />
 
+        {/* Tagline */}
+        <Text style={styles.tagline}>It's DatRun</Text>
+
+        {/* Email Input */}
         <TextInput
+          style={styles.input}
           placeholder="Email"
-          style={styles.input}
-          placeholderTextColor="#ccc"
-          onChangeText={setEmail}
+          placeholderTextColor="#aaa"
+          keyboardType="email-address"
+          autoCapitalize="none"
           value={email}
-        />
-        <TextInput
-          placeholder="Password"
-          secureTextEntry
-          style={styles.input}
-          placeholderTextColor="#ccc"
-          onChangeText={setPassword}
-          value={password}
+          onChangeText={setEmail}
         />
 
-        <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
+        {/* Password Input */}
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Password"
+            placeholderTextColor="#aaa"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <Ionicons
+              name={showPassword ? "eye-off" : "eye"}
+              size={24}
+              color="#666"
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Sign In Button */}
+        <TouchableOpacity
+          style={styles.signInButton}
+          onPress={() => handleSignInWithEmailAndPassword()}
+        >
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
 
-        <Text style={styles.forgotPassword}>Forgot Password?</Text>
-
-        <TouchableOpacity style={styles.socialButton}>
-          <AntDesign name="google" size={20} color="#fff" />
-          <Text style={styles.socialText}>Continue with Google</Text>
+        {/* Forgot Password */}
+        <TouchableOpacity>
+          <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => handleSignUp(email, password)}>
+        {/* OR divider */}
+        <Text style={styles.divider}>── OR ──</Text>
+
+        {/* Social Sign In */}
+        <View style={styles.socialButtons}>
+          {/* TODO: APPLE Sign In */}
+          {/* <TouchableOpacity style={styles.appleButton}>
+            <Ionicons name="logo-apple" size={20} color="#fff" />
+            <Text style={styles.socialText}>Continue with Apple</Text>
+          </TouchableOpacity>  */}
+
+          <TouchableOpacity
+            style={styles.googleButton}
+            onPress={() => signInWithGoogle()}
+          >
+            <Ionicons name="logo-google" size={20} color="#000" />
+            <Text style={[styles.socialText, { color: "#000" }]}>
+              Continue with Google
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Sign Up Prompt */}
+        <TouchableOpacity onPress={() => router.push("/register")}>
           <Text style={styles.signUpText}>
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Text style={{ fontWeight: "bold" }}>Sign Up</Text>
           </Text>
         </TouchableOpacity>
       </View>
-    </ImageBackground>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    width: "100%",
-    height: "100%",
   },
-  overlay: {
-    backgroundColor: "rgba(46, 143, 94, 0.58)",
-    padding: 20,
-    borderRadius: 10,
-    margin: 20,
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 24,
   },
   logo: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 10,
+    width: 150,
+    height: 150,
+    alignSelf: "center",
   },
   tagline: {
-    fontSize: 16,
-    color: "rgba(255, 255, 250, 0.76)",
     textAlign: "center",
-    marginBottom: 30,
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#fff",
+    marginBottom: 32,
+    marginTop: -32,
   },
   input: {
-    backgroundColor: "#333",
-    color: "#fff",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
+    backgroundColor: "#fff",
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 16,
   },
-  signInButton: {
-    backgroundColor: "rgba(24, 123, 153, 0.9)",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  signInText: { color: "#fff", fontWeight: "bold" },
-  forgotPassword: { color: "#fff", textAlign: "center", marginBottom: 20 },
-  socialButton: {
+  passwordContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(24, 123, 153, 0.9)",
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 20,
+    paddingHorizontal: 12,
+    paddingVertical: Platform.OS === "ios" ? 4 : 4,
+    marginBottom: 16,
   },
-  socialText: { color: "#fff", marginLeft: 10 },
-  signUpText: { color: "#fff", textAlign: "center", marginTop: 10 },
+  passwordInput: {
+    flex: 1,
+  },
+  signInButton: {
+    backgroundColor: "#065f46",
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    marginBottom: 12,
+    boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.64)",
+  },
+  signInText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  forgotPassword: {
+    color: "#f0fdf4",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  divider: {
+    textAlign: "center",
+    color: "#fff",
+    marginVertical: 16,
+  },
+  socialButtons: {
+    gap: 12,
+    marginBottom: 24,
+  },
+  appleButton: {
+    flexDirection: "row",
+    backgroundColor: "#000",
+    padding: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  googleButton: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    padding: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  socialText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  signUpText: {
+    color: "#f0fdf4",
+    textAlign: "center",
+  },
 });

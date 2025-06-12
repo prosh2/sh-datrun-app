@@ -1,11 +1,6 @@
 import { useStorageState } from "@/hooks/useStorageState";
 import { auth } from "@/lib/firebase";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  User,
-} from "firebase/auth";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import {
   createContext,
   use,
@@ -13,7 +8,6 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
-import { Alert } from "react-native";
 
 const AuthContext = createContext<{
   storeToken: () => void;
@@ -55,6 +49,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
           // Perform sign-in logic here potentially using Firebase or another auth provider
           // For example, you might use Firebase Auth to sign in a user
           auth.currentUser?.getIdToken().then((token) => setSession(token));
+          return;
         },
         revokeToken: async () => {
           await signOut(auth);
