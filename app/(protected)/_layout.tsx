@@ -19,7 +19,7 @@ export default function ProtectedLayout() {
   if (!session) {
     // On web, static rendering will stop here as the user is not authenticated
     // in the headless Node process that the pages are rendered in.
-    Alert.alert("You are not signed in.");
+    Alert.alert("You are logged out.");
 
     return <Redirect href="/(auth)/login" />;
   }

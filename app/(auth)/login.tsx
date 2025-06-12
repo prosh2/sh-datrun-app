@@ -1,25 +1,12 @@
 import { webClientId } from "@/constants/Constants";
 import { useSession } from "@/contexts/AuthContext";
-import { auth } from "@/lib/firebase";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
-import {
-  GoogleSignin,
-  isErrorWithCode,
-  isSuccessResponse,
-  statusCodes,
-} from "@react-native-google-signin/google-signin";
+import { Ionicons } from "@expo/vector-icons";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import {
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithCredential,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
 import { useEffect, useState } from "react";
 import {
-  Alert,
   Image,
-  ImageBackground,
   Platform,
   StyleSheet,
   Text,
@@ -27,10 +14,9 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { LinearGradient } from "expo-linear-gradient";
 
 export default function LoginPage() {
-  const { storeToken } = useSession();
+  const { loginWithEmailAndPassword, loginWithGoogle } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -43,51 +29,6 @@ export default function LoginPage() {
       profileImageSize: 120, // [iOS] The desired height (and width) of the profile image. Defaults to 120px
     });
   }, []);
-
-  async function signInWithGoogle() {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-      if (isSuccessResponse(response)) {
-        const credential = GoogleAuthProvider.credential(response.data.idToken);
-        await signInWithCredential(auth, credential);
-        storeToken();
-        router.replace("/(protected)/(tabs)");
-        console.log("User logged in successfully");
-      } else {
-        // sign in was cancelled by user
-        console.log("cancelled");
-      }
-    } catch (error) {
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.IN_PROGRESS:
-            // operation (eg. sign in) already in progress
-            console.log("in progress");
-            break;
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            // Android only, play services not available or outdated
-            console.log("play services not available");
-            break;
-          default:
-            // some other error happened
-            console.error(error);
-        }
-      } else {
-        // an error that's not related to google sign in occurred
-      }
-    }
-  }
-  const handleSignInWithEmailAndPassword = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      storeToken();
-      router.replace("/(protected)/(tabs)");
-      console.log("User logged in successfully");
-    } catch (error: any) {
-      Alert.alert("Login Failed", error.message);
-    }
-  };
 
   return (
     <LinearGradient colors={["#34d399", "#059669"]} style={styles.container}>
@@ -134,7 +75,7 @@ export default function LoginPage() {
         {/* Sign In Button */}
         <TouchableOpacity
           style={styles.signInButton}
-          onPress={() => handleSignInWithEmailAndPassword()}
+          onPress={() => loginWithEmailAndPassword(email, password)}
         >
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
@@ -157,7 +98,7 @@ export default function LoginPage() {
 
           <TouchableOpacity
             style={styles.googleButton}
-            onPress={() => signInWithGoogle()}
+            onPress={() => loginWithGoogle()}
           >
             <Ionicons name="logo-google" size={20} color="#000" />
             <Text style={[styles.socialText, { color: "#000" }]}>

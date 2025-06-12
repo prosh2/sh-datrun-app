@@ -1,4 +1,5 @@
 import FeedComponent from "@/components/FeedComponent";
+import { USER_DISPLAY_PICTURE_FALLBACK } from "@/constants/Constants";
 import { useSession } from "@/contexts/AuthContext";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
@@ -6,7 +7,6 @@ import { Pressable } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
   const { user } = useSession();
-  const fallbackPhoto = require("../../../assets/images/favicon.png");
   const photoURL = user?.photoURL;
 
   return (
@@ -14,7 +14,11 @@ export default function HomeScreen() {
       <View style={styles.titleContainer}>
         <Pressable onPress={() => router.push("/(protected)/profile")}>
           <Image
-            source={photoURL ? { uri: photoURL } : fallbackPhoto}
+            source={
+              photoURL
+                ? { uri: photoURL }
+                : { uri: USER_DISPLAY_PICTURE_FALLBACK }
+            }
             style={styles.avatar}
           />
         </Pressable>

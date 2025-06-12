@@ -7,7 +7,7 @@ export default function Index() {
   const { session } = useSession();
 
   if (!session) {
-    Alert.alert("You are not signed in.");
+    Alert.alert("You are logged out.");
     return <Redirect href="/(auth)/login" />;
   }
   return <Redirect href="/(protected)/(tabs)" />;

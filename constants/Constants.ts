@@ -12,3 +12,5 @@ export const {
   iOSClientId,
   webClientId,
 } = Constants.expoConfig?.extra || {};
+
+export const USER_DISPLAY_PICTURE_FALLBACK = "../assets/images/favicon.png";
