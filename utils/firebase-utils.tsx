@@ -21,10 +21,14 @@ export async function uploadImageAsync(uri: string, pathInStorage: string) {
     xhr.open("GET", uri, true);
     xhr.send(null);
   })) as Blob;
-
-  const fileRef = ref(storage, pathInStorage);
-  await uploadBytes(fileRef, blob);
-  return await getDownloadURL(fileRef);
+  try {
+    const fileRef = ref(storage, pathInStorage);
+    await uploadBytes(fileRef, blob);
+    return await getDownloadURL(fileRef);
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 }
 
 export async function uploadProfilePictureToDB(

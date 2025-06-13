@@ -31,6 +31,7 @@ export default function ProfileScreen() {
           result.assets[0].uri,
           filename,
         );
+        if (downloadURL === null) return;
         await uploadProfilePictureToDB("users", user.id, downloadURL);
         setDisplayPhoto(result.assets[0].uri);
       }
