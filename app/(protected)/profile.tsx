@@ -1,31 +1,17 @@
 import { StyleSheet, View } from "react-native";
 
 import { USER_DISPLAY_PICTURE_FALLBACK } from "@/constants/Constants";
-import { useSession } from "@/contexts/AuthContext";
-import { db } from "@/lib/firebase";
+import { getAuthContext } from "@/contexts/AuthContext";
+import { getUserContext } from "@/contexts/UserContext";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity } from "react-native";
 
 export default function ProfileScreen() {
-  const { user, logout } = useSession();
+  const { user, logout } = getAuthContext();
+  const { displayPhoto } = getUserContext();
   const [image, setImage] = useState<string | null>(null);
-  const photoURL = user?.photoURL; //TODO: fetch from firestore first, if not found use google profile pic | default
-
-  const queryUser = async () => {
-    const q = query(collection(db, "users"), where("id", "==", user?.uid));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
-    });
-  };
-
-  useEffect(() => {
-    queryUser();
-  }, []);
 
   const handleUploadProfilePicture = async () => {
     // No permissions request is necessary for launching the image library
@@ -47,8 +33,8 @@ export default function ProfileScreen() {
       <View style={styles.profileSection}>
         <Image
           source={
-            photoURL
-              ? { uri: photoURL }
+            displayPhoto
+              ? { uri: displayPhoto }
               : { uri: USER_DISPLAY_PICTURE_FALLBACK }
           }
           style={styles.avatar}

@@ -1,10 +1,10 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useSession } from "@/contexts/AuthContext";
+import { getAuthContext } from "@/contexts/AuthContext";
 import { Redirect, Stack } from "expo-router";
 import { Alert } from "react-native";
 
 export default function ProtectedLayout() {
-  const { session, isLoading } = useSession();
+  const { session, isLoading } = getAuthContext();
   // You can keep the splash screen open, or render a loading screen like we do here.
   // With Expo Router, something must be rendered to the screen while loading the initial
   // auth state. In the example above, the app layout renders a loading message.

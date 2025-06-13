@@ -43,16 +43,16 @@ const AuthContext = createContext<{
 });
 
 // This hook can be used to access the user info.
-export function useSession() {
+export function getAuthContext() {
   const value = use(AuthContext);
   if (!value) {
-    throw new Error("useSession must be wrapped in a <SessionProvider />");
+    throw new Error("getAuthContext must be wrapped in a <SessionProvider />");
   }
 
   return value;
 }
 
-export function SessionProvider({ children }: PropsWithChildren) {
+export function AuthContextProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
   const [user, setUser] = useState<User | null>(null);
 
@@ -94,8 +94,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
       if (isSuccessResponse(response)) {
-        const credential = GoogleAuthProvider.credential(response.data.idToken);
-        const result = await signInWithCredential(auth, credential);
+        const result = await signInWithCredential(
+          auth,
+          GoogleAuthProvider.credential(response.data.idToken),
+        );
         const token = await result.user.getIdToken();
         const hasUser = await userExists(result.user.uid);
         if (!hasUser) {

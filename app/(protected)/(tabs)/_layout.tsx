@@ -1,5 +1,5 @@
 import { Redirect, Tabs } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, Platform, StyleSheet } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
@@ -7,13 +7,34 @@ import { ThemedText } from "@/components/ThemedText";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
-import { useSession } from "@/contexts/AuthContext";
+import { getAuthContext } from "@/contexts/AuthContext";
+import { getUserContext } from "@/contexts/UserContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { session, isLoading } = useSession();
+  const { user, session, isLoading } = getAuthContext();
+  const { displayPhoto, setDisplayPhoto } = getUserContext();
+
+  const queryUser = async (id: string) => {
+    console.log("querying user profile");
+    const docRef = doc(db, "users", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      setDisplayPhoto(docSnap.data().photoURL); //user image stored in firestore
+    }
+    setDisplayPhoto(user?.photoURL || null); //user google image
+  };
+
+  useEffect(() => {
+    if (user?.uid) {
+      queryUser(user.uid);
+    }
+  }, []);
+
   // You can keep the splash screen open, or render a loading screen like we do here.
   // With Expo Router, something must be rendered to the screen while loading the initial
   // auth state. In the example above, the app layout renders a loading message.

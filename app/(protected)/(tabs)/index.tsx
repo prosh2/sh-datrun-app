@@ -1,12 +1,12 @@
 import FeedComponent from "@/components/FeedComponent";
 import { USER_DISPLAY_PICTURE_FALLBACK } from "@/constants/Constants";
-import { useSession } from "@/contexts/AuthContext";
+import { getAuthContext } from "@/contexts/AuthContext";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
-  const { user } = useSession();
+  const { user } = getAuthContext();
   const photoURL = user?.photoURL;
 
   return (

@@ -1,5 +1,5 @@
 import { webClientId } from "@/constants/Constants";
-import { useSession } from "@/contexts/AuthContext";
+import { getAuthContext } from "@/contexts/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { LinearGradient } from "expo-linear-gradient";
@@ -16,7 +16,7 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 
 export default function LoginPage() {
-  const { loginWithEmailAndPassword, loginWithGoogle } = useSession();
+  const { loginWithEmailAndPassword, loginWithGoogle } = getAuthContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

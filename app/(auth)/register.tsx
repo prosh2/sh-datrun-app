@@ -1,4 +1,4 @@
-import { useSession } from "@/contexts/AuthContext";
+import { getAuthContext } from "@/contexts/AuthContext";
 import { auth } from "@/lib/firebase";
 import { LinearGradient } from "expo-linear-gradient";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -10,7 +10,7 @@ const SignUpScreen = () => {
   const { colors } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loginWithEmailAndPassword } = useSession();
+  const { loginWithEmailAndPassword } = getAuthContext();
 
   const handleSignUp = async () => {
     try {
