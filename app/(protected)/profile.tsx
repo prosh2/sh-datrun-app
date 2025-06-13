@@ -1,18 +1,44 @@
 import { StyleSheet, View } from "react-native";
 
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { Image, ScrollView, Text, TouchableOpacity } from "react-native";
-import { useSession } from "@/contexts/AuthContext";
 import { USER_DISPLAY_PICTURE_FALLBACK } from "@/constants/Constants";
+import { useSession } from "@/contexts/AuthContext";
+import { db } from "@/lib/firebase";
+import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { Image, ScrollView, Text, TouchableOpacity } from "react-native";
 
 export default function ProfileScreen() {
   const { user, logout } = useSession();
+  const [image, setImage] = useState<string | null>(null);
+  const photoURL = user?.photoURL; //TODO: fetch from firestore first, if not found use google profile pic | default
 
-  const photoURL = user?.photoURL;
+  const queryUser = async () => {
+    const q = query(collection(db, "users"), where("id", "==", user?.uid));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+    });
+  };
 
-  const handleLogout = () => {
-    logout();
+  useEffect(() => {
+    queryUser();
+  }, []);
+
+  const handleUploadProfilePicture = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(result);
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
 
   return (
@@ -61,7 +87,7 @@ export default function ProfileScreen() {
           <Ionicons name="lock-closed-outline" size={20} color="#333" />
           <Text style={styles.optionText}>Privacy Settings</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionItem} onPress={handleLogout}>
+        <TouchableOpacity style={styles.optionItem} onPress={logout}>
           <Ionicons name="log-out-outline" size={20} color="#e11d48" />
           <Text style={[styles.optionText, { color: "#e11d48" }]}>Logout</Text>
         </TouchableOpacity>

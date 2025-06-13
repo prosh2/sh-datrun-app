@@ -1,5 +1,6 @@
+import { UserModel } from "@/components/model/User";
 import { useStorageState } from "@/hooks/useStorageState";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import {
   GoogleSignin,
   isErrorWithCode,
@@ -15,6 +16,7 @@ import {
   signOut,
   User,
 } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import {
   createContext,
   use,
@@ -60,6 +62,31 @@ export function SessionProvider({ children }: PropsWithChildren) {
     console.log("User logged in successfully");
   };
 
+  const userExists = async (id: string) => {
+    const docRef = doc(db, "users", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return true;
+    } else {
+      console.log("No such document!");
+      return false;
+    }
+  };
+  const getUserInfo = async (user: User) => {
+    const userModel = new UserModel(
+      user.uid,
+      user.displayName,
+      user.email,
+      user.photoURL,
+    );
+    return JSON.parse(JSON.stringify(userModel));
+  };
+
+  const writeUserToDB = async (user: User) => {
+    const userInfo = await getUserInfo(user);
+    await setDoc(doc(db, "users", user.uid), userInfo);
+  };
+
   const loginWithGoogle = async () => {
     // Perform sign-in logic here potentially using Firebase or another auth provider
     // For example, you might use Firebase Auth to sign in a user
@@ -70,6 +97,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
         const credential = GoogleAuthProvider.credential(response.data.idToken);
         const result = await signInWithCredential(auth, credential);
         const token = await result.user.getIdToken();
+        const hasUser = await userExists(result.user.uid);
+        if (!hasUser) {
+          console.log("First time logging in");
+          await writeUserToDB(result.user);
+        }
         storeTokenAndNavigate(token);
       } else {
         console.log("cancelled");
@@ -99,6 +131,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const token = await result.user.getIdToken();
+      const hasUser = await userExists(result.user.uid);
+      if (!hasUser) {
+        console.log("First time logging in");
+        await writeUserToDB(result.user);
+      }
       storeTokenAndNavigate(token);
     } catch (error: any) {
       Alert.alert("Login Failed", error.message);
