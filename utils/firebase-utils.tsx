@@ -1,4 +1,4 @@
-import { convertFirebaseUserToUserModel } from "@/components/model/User";
+import { createAppUserFromJSON } from "@/components/model/User";
 import { db, storage } from "@/lib/firebase";
 import { User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -57,6 +57,9 @@ export const userExistsInDB = async (user_id: string) => {
 };
 
 export const writeUserToDB = async (user: User) => {
-  const userInfo = await convertFirebaseUserToUserModel(user);
-  await setDoc(doc(db, "users", user.uid), userInfo);
+  const userInfo = createAppUserFromJSON(user);
+  await setDoc(
+    doc(db, "users", user.uid),
+    JSON.parse(JSON.stringify(userInfo)),
+  );
 };

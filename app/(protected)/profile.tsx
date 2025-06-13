@@ -25,14 +25,14 @@ export default function ProfileScreen() {
       quality: 1,
     });
     if (!result.canceled) {
-      if (user?.id) {
-        const filename = `users/${user.id}/profile.jpg`; // Or generate a UUID
+      if (user?.uid) {
+        const filename = `users/${user.uid}/profile.jpg`; // Or generate a UUID
         const downloadURL = await uploadImageAsync(
           result.assets[0].uri,
           filename,
         );
         if (downloadURL === null) return;
-        await uploadProfilePictureToDB("users", user.id, downloadURL);
+        await uploadProfilePictureToDB("users", user.uid, downloadURL);
         setDisplayPhoto(result.assets[0].uri);
       }
     }
@@ -52,7 +52,7 @@ export default function ProfileScreen() {
             style={styles.avatar}
           />
         </TouchableOpacity>
-        <Text style={styles.username}>{user?.name}</Text>
+        <Text style={styles.username}>{user?.displayName}</Text>
         <TouchableOpacity style={styles.editButton}>
           <Ionicons name="settings-outline" size={16} color="#fff" />
           <Text style={styles.editButtonText}> Edit Profile</Text>

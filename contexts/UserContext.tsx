@@ -1,11 +1,11 @@
-import { UserType } from "@/components/model/User";
+import { AppUser } from "@/components/model/User";
 import { createContext, PropsWithChildren, use, useState } from "react";
 
 const UserContext = createContext<{
-  setUser: (user: UserType | null) => void;
+  setUser: (user: AppUser | null) => void;
   setDisplayPhoto: (photo: string | null) => void;
   displayPhoto: string | null;
-  user: UserType | null;
+  user: AppUser | null;
 }>({
   setUser: () => null,
   setDisplayPhoto: () => null,
@@ -24,7 +24,7 @@ export function getUserContext() {
 
 export function UserContextProvider({ children }: PropsWithChildren) {
   const [displayPhoto, setDisplayPhoto] = useState<string | null>(null);
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
 
   return (
     <UserContext.Provider
