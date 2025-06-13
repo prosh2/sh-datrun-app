@@ -7,6 +7,7 @@ import { Pressable } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
   const { displayPhoto } = getUserContext();
+
   return (
     <>
       <View style={styles.titleContainer}>

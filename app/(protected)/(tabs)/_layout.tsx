@@ -27,6 +27,7 @@ export default function TabLayout() {
       if (docSnap.exists()) {
         setUser(JSON.parse(JSON.stringify(docSnap.data())));
         setDisplayPhoto(docSnap.data().photoURL); //user image stored in firestore
+        return;
       }
       setDisplayPhoto(firebaseUser?.photoURL || null); //user google image
     },

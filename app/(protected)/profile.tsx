@@ -3,15 +3,18 @@ import { StyleSheet, View } from "react-native";
 import { USER_DISPLAY_PICTURE_FALLBACK } from "@/constants/Constants";
 import { getAuthContext } from "@/contexts/AuthContext";
 import { getUserContext } from "@/contexts/UserContext";
+import {
+  uploadImageAsync,
+  uploadProfilePictureToDB,
+} from "@/utils/firebase-utils";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
+import React from "react";
 import { Image, ScrollView, Text, TouchableOpacity } from "react-native";
 
 export default function ProfileScreen() {
   const { logout } = getAuthContext();
-  const { user, displayPhoto } = getUserContext();
-  const [image, setImage] = useState<string | null>(null);
+  const { user, displayPhoto, setDisplayPhoto } = getUserContext();
 
   const handleUploadProfilePicture = async () => {
     // No permissions request is necessary for launching the image library
@@ -21,9 +24,16 @@ export default function ProfileScreen() {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      if (user?.id) {
+        const filename = `users/${user.id}/profile.jpg`; // Or generate a UUID
+        const downloadURL = await uploadImageAsync(
+          result.assets[0].uri,
+          filename,
+        );
+        await uploadProfilePictureToDB("users", user.id, downloadURL);
+        setDisplayPhoto(result.assets[0].uri);
+      }
     }
   };
 
@@ -31,15 +41,16 @@ export default function ProfileScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       {/* Profile Header */}
       <View style={styles.profileSection}>
-        <Image
-          source={
-            displayPhoto
-              ? { uri: displayPhoto }
-              : { uri: USER_DISPLAY_PICTURE_FALLBACK }
-          }
-          style={styles.avatar}
-        />
-
+        <TouchableOpacity onPress={handleUploadProfilePicture}>
+          <Image
+            source={
+              displayPhoto
+                ? { uri: displayPhoto }
+                : { uri: USER_DISPLAY_PICTURE_FALLBACK }
+            }
+            style={styles.avatar}
+          />
+        </TouchableOpacity>
         <Text style={styles.username}>{user?.name}</Text>
         <TouchableOpacity style={styles.editButton}>
           <Ionicons name="settings-outline" size={16} color="#fff" />

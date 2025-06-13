@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { getAuthContext } from "@/contexts/AuthContext";
+import { UserContextProvider } from "@/contexts/UserContext";
 import { Redirect, Stack } from "expo-router";
 import { Alert } from "react-native";
 
@@ -25,9 +26,11 @@ export default function ProtectedLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="profile" options={{ headerShown: false }} />
-    </Stack>
+    <UserContextProvider>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="profile" options={{ headerShown: false }} />
+      </Stack>
+    </UserContextProvider>
   );
 }

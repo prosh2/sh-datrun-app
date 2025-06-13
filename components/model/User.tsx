@@ -1,3 +1,4 @@
+import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 
 export type UserType = {
@@ -44,3 +45,13 @@ export class UserModel {
     this.createdAt = Timestamp.now();
   }
 }
+
+export const convertFirebaseUserToUserModel = async (user: User) => {
+  const userModel = new UserModel(
+    user.uid,
+    user.displayName,
+    user.email,
+    user.photoURL,
+  );
+  return JSON.parse(JSON.stringify(userModel));
+};
