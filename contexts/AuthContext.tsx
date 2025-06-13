@@ -32,14 +32,14 @@ const AuthContext = createContext<{
   logout: () => void;
   session?: string | null;
   isLoading: boolean;
-  user: User | null;
+  firebaseUser: User | null;
 }>({
   loginWithGoogle: () => null,
   loginWithEmailAndPassword: () => null,
   logout: () => null,
   session: null,
   isLoading: false,
-  user: null,
+  firebaseUser: null,
 });
 
 // This hook can be used to access the user info.
@@ -54,7 +54,7 @@ export function getAuthContext() {
 
 export function AuthContextProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
-  const [user, setUser] = useState<User | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
 
   const storeTokenAndNavigate = (token: string) => {
     setSession(token);
@@ -150,7 +150,7 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
   };
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, setUser);
+    const unsub = onAuthStateChanged(auth, setFirebaseUser);
     return () => unsub();
   }, []);
 
@@ -162,7 +162,7 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
         logout,
         session,
         isLoading,
-        user,
+        firebaseUser,
       }}
     >
       {children}

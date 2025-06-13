@@ -1,22 +1,20 @@
 import FeedComponent from "@/components/FeedComponent";
 import { USER_DISPLAY_PICTURE_FALLBACK } from "@/constants/Constants";
-import { getAuthContext } from "@/contexts/AuthContext";
+import { getUserContext } from "@/contexts/UserContext";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
-  const { user } = getAuthContext();
-  const photoURL = user?.photoURL;
-
+  const { displayPhoto } = getUserContext();
   return (
     <>
       <View style={styles.titleContainer}>
         <Pressable onPress={() => router.push("/(protected)/profile")}>
           <Image
             source={
-              photoURL
-                ? { uri: photoURL }
+              displayPhoto
+                ? { uri: displayPhoto }
                 : { uri: USER_DISPLAY_PICTURE_FALLBACK }
             }
             style={styles.avatar}

@@ -9,8 +9,8 @@ import React, { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity } from "react-native";
 
 export default function ProfileScreen() {
-  const { user, logout } = getAuthContext();
-  const { displayPhoto } = getUserContext();
+  const { logout } = getAuthContext();
+  const { user, displayPhoto } = getUserContext();
   const [image, setImage] = useState<string | null>(null);
 
   const handleUploadProfilePicture = async () => {
@@ -40,7 +40,7 @@ export default function ProfileScreen() {
           style={styles.avatar}
         />
 
-        <Text style={styles.username}>{user?.displayName}</Text>
+        <Text style={styles.username}>{user?.name}</Text>
         <TouchableOpacity style={styles.editButton}>
           <Ionicons name="settings-outline" size={16} color="#fff" />
           <Text style={styles.editButtonText}> Edit Profile</Text>

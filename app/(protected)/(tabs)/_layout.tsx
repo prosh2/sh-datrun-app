@@ -1,5 +1,5 @@
 import { Redirect, Tabs } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Alert, Platform, StyleSheet } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
@@ -16,22 +16,26 @@ import { db } from "@/lib/firebase";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { user, session, isLoading } = getAuthContext();
-  const { displayPhoto, setDisplayPhoto } = getUserContext();
+  const { firebaseUser, session, isLoading } = getAuthContext();
+  const { setUser, setDisplayPhoto } = getUserContext();
 
-  const queryUser = async (id: string) => {
-    console.log("querying user profile");
-    const docRef = doc(db, "users", id);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      setDisplayPhoto(docSnap.data().photoURL); //user image stored in firestore
-    }
-    setDisplayPhoto(user?.photoURL || null); //user google image
-  };
+  const queryUser = useMemo(
+    () => async (id: string) => {
+      console.log("[firestore] Querying user profile");
+      const docRef = doc(db, "users", id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setUser(JSON.parse(JSON.stringify(docSnap.data())));
+        setDisplayPhoto(docSnap.data().photoURL); //user image stored in firestore
+      }
+      setDisplayPhoto(firebaseUser?.photoURL || null); //user google image
+    },
+    [firebaseUser],
+  );
 
   useEffect(() => {
-    if (user?.uid) {
-      queryUser(user.uid);
+    if (firebaseUser?.uid) {
+      queryUser(firebaseUser.uid);
     }
   }, []);
 
