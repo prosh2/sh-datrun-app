@@ -1,5 +1,4 @@
 import FeedComponent from "@/components/FeedComponent";
-import { USER_DISPLAY_PICTURE_FALLBACK } from "@/constants/Constants";
 import { getUserContext } from "@/contexts/UserContext";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
@@ -11,12 +10,12 @@ export default function HomeScreen() {
   return (
     <>
       <View style={styles.titleContainer}>
-        <Pressable onPress={() => router.push("/(protected)/profile")}>
+        <Pressable onPress={() => router.push("/(protected)/(profile)")}>
           <Image
             source={
               displayPhoto
                 ? { uri: displayPhoto }
-                : { uri: USER_DISPLAY_PICTURE_FALLBACK }
+                : require("@/assets/images/favicon.png")
             }
             style={styles.avatar}
           />

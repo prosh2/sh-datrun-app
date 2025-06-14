@@ -57,7 +57,7 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
 
   const storeTokenAndNavigate = (token: string) => {
     setSession(token);
-    router.replace("/(protected)/(tabs)");
+    router.replace("/(protected)/(home)");
     console.log("User logged in successfully");
   };
 

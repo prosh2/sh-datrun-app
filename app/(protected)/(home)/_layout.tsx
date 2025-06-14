@@ -14,7 +14,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-export default function TabLayout() {
+export default function HomeLayout() {
   const colorScheme = useColorScheme();
   const { firebaseUser, session, isLoading } = getAuthContext();
   const { setUser, setDisplayPhoto } = getUserContext();

@@ -1,6 +1,5 @@
 import { StyleSheet, View } from "react-native";
 
-import { USER_DISPLAY_PICTURE_FALLBACK } from "@/constants/Constants";
 import { getAuthContext } from "@/contexts/AuthContext";
 import { getUserContext } from "@/contexts/UserContext";
 import {
@@ -9,6 +8,7 @@ import {
 } from "@/utils/firebase-utils";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
 import React from "react";
 import { Image, ScrollView, Text, TouchableOpacity } from "react-native";
 
@@ -47,13 +47,16 @@ export default function ProfileScreen() {
             source={
               displayPhoto
                 ? { uri: displayPhoto }
-                : { uri: USER_DISPLAY_PICTURE_FALLBACK }
+                : require("@/assets/images/favicon.png")
             }
             style={styles.avatar}
           />
         </TouchableOpacity>
         <Text style={styles.username}>{user?.displayName}</Text>
-        <TouchableOpacity style={styles.editButton}>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => router.push("/edit-profile")}
+        >
           <Ionicons name="settings-outline" size={16} color="#fff" />
           <Text style={styles.editButtonText}> Edit Profile</Text>
         </TouchableOpacity>

@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
-    paddingVertical: Platform.OS === "ios" ? 4 : 4,
+    paddingVertical: Platform.OS === "ios" ? 10 : 4,
     marginBottom: 16,
   },
   passwordInput: {
