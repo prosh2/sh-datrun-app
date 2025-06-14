@@ -1,4 +1,4 @@
-export type Post = {
+export interface Post {
   id: string;
   name: string;
   distance: string;
@@ -9,4 +9,5 @@ export type Post = {
   caption: string;
   pace: string; // Optional property for pace
   datetime: string; // Optional property for the date of the post
-};
+  toJSON(): object;
+}

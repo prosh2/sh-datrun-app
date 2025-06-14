@@ -1,20 +1,22 @@
 import FeedComponent from "@/components/FeedComponent";
-import { useSession } from "@/contexts/AuthContext";
+import { getUserContext } from "@/contexts/UserContext";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
-  const { user } = useSession();
-  const fallbackPhoto = require("../../../assets/images/favicon.png");
-  const photoURL = user?.photoURL;
+  const { displayPhoto } = getUserContext();
 
   return (
     <>
       <View style={styles.titleContainer}>
-        <Pressable onPress={() => router.push("/(protected)/profile")}>
+        <Pressable onPress={() => router.push("/(protected)/(profile)")}>
           <Image
-            source={photoURL ? { uri: photoURL } : fallbackPhoto}
+            source={
+              displayPhoto
+                ? { uri: displayPhoto }
+                : require("@/assets/images/favicon.png")
+            }
             style={styles.avatar}
           />
         </Pressable>

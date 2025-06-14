@@ -4,7 +4,7 @@ import { UserContextProvider } from "@/contexts/UserContext";
 import { Redirect, Stack } from "expo-router";
 import { Alert } from "react-native";
 
-export default function ProtectedLayout() {
+export default function ProfileLayout() {
   const { session, isLoading } = getAuthContext();
   // You can keep the splash screen open, or render a loading screen like we do here.
   // With Expo Router, something must be rendered to the screen while loading the initial
@@ -26,11 +26,9 @@ export default function ProtectedLayout() {
   }
 
   return (
-    <UserContextProvider>
-      <Stack>
-        <Stack.Screen name="(home)" options={{ headerShown: false }} />
-        <Stack.Screen name="(profile)" options={{ headerShown: false }} />
-      </Stack>
-    </UserContextProvider>
+    <Stack>
+      <Stack.Screen name="index" options={{ title: "Profile" }} />
+      <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
+    </Stack>
   );
 }
