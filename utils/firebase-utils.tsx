@@ -1,7 +1,4 @@
-import {
-  createAppUserFromJSON,
-  EditProfileFormData,
-} from "@/components/model/User";
+import { createAppUserFromJSON, ProfileForm } from "@/components/model/User";
 import { db, storage } from "@/lib/firebase";
 import { User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -50,13 +47,13 @@ export async function uploadProfilePictureToDB(
 export async function uploadProfileDetailsToDB(
   collection: string,
   user_id: string,
-  profile: EditProfileFormData,
+  profile: ProfileForm,
 ) {
   try {
     await setDoc(
       doc(db, collection, user_id),
       {
-        profile,
+        ...profile,
       },
       { merge: true },
     );
@@ -78,6 +75,7 @@ export const userExistsInDB = async (user_id: string) => {
 
 export const writeUserToDB = async (user: User) => {
   const userInfo = createAppUserFromJSON(user);
+  console.log(userInfo);
   await setDoc(
     doc(db, "users", user.uid),
     JSON.parse(JSON.stringify(userInfo)),

@@ -1,4 +1,4 @@
-import { EditProfileFormData } from "@/components/model/User";
+import { AppUser, ProfileForm } from "@/components/model/User";
 import { getUserContext } from "@/contexts/UserContext";
 import { uploadProfileDetailsToDB } from "@/utils/firebase-utils";
 import React from "react";
@@ -11,14 +11,15 @@ export default function EditProfileScreen() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<EditProfileFormData>();
+  } = useForm<ProfileForm>();
   const theme = useTheme();
-  const { user } = getUserContext();
-  const onSubmit = (data: EditProfileFormData) => {
+  const { user, setUser } = getUserContext();
+  const onSubmit = (data: ProfileForm) => {
     console.log("Updated Profile:", data);
     // call Firestore update here
     if (!user) return;
     uploadProfileDetailsToDB("users", user.uid, data);
+    setUser({ ...user, ...data });
   };
 
   return (
@@ -26,7 +27,7 @@ export default function EditProfileScreen() {
       <Text style={styles.title}>Edit Profile</Text>
       <Controller
         control={control}
-        name="username"
+        name="displayName"
         rules={{ required: "Name is required" }}
         render={({ field: { onChange, value } }) => (
           <TextInput
@@ -34,25 +35,25 @@ export default function EditProfileScreen() {
             value={value}
             onChangeText={onChange}
             mode="outlined"
-            error={!!errors.username}
+            error={!!errors.displayName}
             style={styles.input}
           />
         )}
       />
-      {errors.username && (
-        <Text style={styles.error}>{errors.username.message}</Text>
+      {errors.displayName && (
+        <Text style={styles.error}>{errors.displayName.message}</Text>
       )}
 
       <Controller
         control={control}
-        name="weight"
+        name="biometrics.weight"
         rules={{
           pattern: { value: /^\d+$/, message: "Weight must be a number" },
         }}
         render={({ field: { onChange, value } }) => (
           <TextInput
             label="Weight (kg)"
-            value={value}
+            value={(value || "").toString()}
             onChangeText={onChange}
             mode="outlined"
             keyboardType="numeric"
@@ -60,20 +61,20 @@ export default function EditProfileScreen() {
           />
         )}
       />
-      {errors.weight && (
-        <Text style={styles.error}>{errors.weight.message}</Text>
+      {errors.biometrics?.weight && (
+        <Text style={styles.error}>{errors.biometrics.weight.message}</Text>
       )}
 
       <Controller
         control={control}
-        name="height"
+        name="biometrics.height"
         rules={{
           pattern: { value: /^\d+$/, message: "Height must be a number" },
         }}
         render={({ field: { onChange, value } }) => (
           <TextInput
             label="Height (cm)"
-            value={value}
+            value={(value || "").toString()}
             onChangeText={onChange}
             mode="outlined"
             keyboardType="numeric"
@@ -81,8 +82,8 @@ export default function EditProfileScreen() {
           />
         )}
       />
-      {errors.height && (
-        <Text style={styles.error}>{errors.height.message}</Text>
+      {errors.biometrics?.height && (
+        <Text style={styles.error}>{errors.biometrics.height.message}</Text>
       )}
 
       <Button
