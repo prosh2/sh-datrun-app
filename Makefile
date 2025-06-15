@@ -7,7 +7,6 @@ ifeq ($(OS),Windows_NT)
 	-pip install pre-commit
 else
 	brew bundle
-	brew install pre-commit || echo "pre-commit already installed"
 endif
 
 pre-commit:
