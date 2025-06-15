@@ -75,7 +75,6 @@ export const userExistsInDB = async (user_id: string) => {
 
 export const writeUserToDB = async (user: User) => {
   const userInfo = createAppUserFromJSON(user);
-  console.log(userInfo);
   await setDoc(
     doc(db, "users", user.uid),
     JSON.parse(JSON.stringify(userInfo)),

@@ -1,4 +1,3 @@
-import { UserMetadata } from "firebase/auth";
 interface ProfileStats {
   followersCount?: number;
   followingCount?: number;
@@ -24,7 +23,10 @@ export interface AppUser {
   photoURL?: string; // Optional property for user's profile picture
   stats: ProfileStats;
   biometrics: Biometrics;
-  readonly metadata: UserMetadata;
+  readonly metadata: {
+    createdAt?: number;
+    lastLoginAt?: number;
+  };
   toJSON(): object;
 }
 export function createAppUserFromJSON(json: any): AppUser {
@@ -52,7 +54,14 @@ export function createAppUserFromJSON(json: any): AppUser {
       postsCount: json.stats?.postsCount ?? 0,
     },
 
-    metadata: json.metadata as UserMetadata,
+    metadata: {
+      createdAt: json.metadata?.creationTime
+        ? Date.parse(json.metadata.creationTime)
+        : undefined,
+      lastLoginAt: json.metadata?.lastSignInTime
+        ? Date.parse(json.metadata.lastSignInTime)
+        : undefined,
+    },
 
     toJSON() {
       return {
