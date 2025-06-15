@@ -1,7 +1,6 @@
-import { useSession } from "@/contexts/AuthContext";
+import { getAuthContext } from "@/contexts/AuthContext";
 import { auth } from "@/lib/firebase";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
@@ -11,20 +10,12 @@ const SignUpScreen = () => {
   const { colors } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { storeToken } = useSession();
+  const { loginWithEmailAndPassword } = getAuthContext();
 
   const handleSignUp = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      const user = userCredential.user;
-      console.log("User created:", user.uid);
-      storeToken();
-      router.replace("/(protected)/(tabs)"); // Navigate to home after signup
-      // Optionally store user info, navigate, etc.
+      await createUserWithEmailAndPassword(auth, email, password);
+      loginWithEmailAndPassword(email, password);
     } catch (error: any) {
       console.error("Error signing up:", error.code, error.message);
       // Handle errors like:

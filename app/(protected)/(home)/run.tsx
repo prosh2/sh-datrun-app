@@ -31,27 +31,31 @@ export default function StartRunScreen() {
   }
 
   const fetchLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission denied",
-        "Location access is required to use this feature.",
-      );
-      return;
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission denied",
+          "Location access is required to use this feature.",
+        );
+        return;
+      }
+
+      const currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
+
+      const initialRegion: Region = {
+        latitude: currentLocation.coords.latitude,
+        longitude: currentLocation.coords.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      };
+
+      setRegion(initialRegion);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching location:", error);
     }
-
-    const currentLocation = await Location.getCurrentPositionAsync({});
-    setLocation(currentLocation);
-
-    const initialRegion: Region = {
-      latitude: currentLocation.coords.latitude,
-      longitude: currentLocation.coords.longitude,
-      latitudeDelta: 0.005,
-      longitudeDelta: 0.005,
-    };
-
-    setRegion(initialRegion);
-    setLoading(false);
   };
 
   useEffect(() => {
