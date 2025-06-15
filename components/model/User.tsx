@@ -6,10 +6,10 @@ interface ProfileStats {
 }
 
 export type EditProfileFormData = {
-  name: string;
+  username: string;
   weight: string;
   height: string;
-  shoeModel: string;
+  // shoeModel: string;
 };
 
 export interface AppUser {

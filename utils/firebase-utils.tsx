@@ -1,4 +1,7 @@
-import { createAppUserFromJSON } from "@/components/model/User";
+import {
+  createAppUserFromJSON,
+  EditProfileFormData,
+} from "@/components/model/User";
 import { db, storage } from "@/lib/firebase";
 import { User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -43,6 +46,23 @@ export async function uploadProfilePictureToDB(
     },
     { merge: true },
   );
+}
+export async function uploadProfileDetailsToDB(
+  collection: string,
+  user_id: string,
+  profile: EditProfileFormData,
+) {
+  try {
+    await setDoc(
+      doc(db, collection, user_id),
+      {
+        profile,
+      },
+      { merge: true },
+    );
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export const userExistsInDB = async (user_id: string) => {

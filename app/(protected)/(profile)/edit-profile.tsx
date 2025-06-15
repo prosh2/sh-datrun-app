@@ -1,4 +1,6 @@
 import { EditProfileFormData } from "@/components/model/User";
+import { getUserContext } from "@/contexts/UserContext";
+import { uploadProfileDetailsToDB } from "@/utils/firebase-utils";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
@@ -11,19 +13,20 @@ export default function EditProfileScreen() {
     formState: { errors },
   } = useForm<EditProfileFormData>();
   const theme = useTheme();
-
+  const { user } = getUserContext();
   const onSubmit = (data: EditProfileFormData) => {
     console.log("Updated Profile:", data);
     // call Firestore update here
+    if (!user) return;
+    uploadProfileDetailsToDB("users", user.uid, data);
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Edit Profile</Text>
-
       <Controller
         control={control}
-        name="name"
+        name="username"
         rules={{ required: "Name is required" }}
         render={({ field: { onChange, value } }) => (
           <TextInput
@@ -31,12 +34,14 @@ export default function EditProfileScreen() {
             value={value}
             onChangeText={onChange}
             mode="outlined"
-            error={!!errors.name}
+            error={!!errors.username}
             style={styles.input}
           />
         )}
       />
-      {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
+      {errors.username && (
+        <Text style={styles.error}>{errors.username.message}</Text>
+      )}
 
       <Controller
         control={control}
@@ -80,20 +85,6 @@ export default function EditProfileScreen() {
         <Text style={styles.error}>{errors.height.message}</Text>
       )}
 
-      <Controller
-        control={control}
-        name="shoeModel"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            label="Running Shoe Model"
-            value={value}
-            onChangeText={onChange}
-            mode="outlined"
-            style={styles.input}
-          />
-        )}
-      />
-
       <Button
         mode="contained"
         onPress={handleSubmit(onSubmit)}
@@ -123,6 +114,7 @@ const styles = StyleSheet.create({
   saveButton: {
     marginTop: 20,
     paddingVertical: 6,
+    backgroundColor: "#059669",
   },
   error: {
     color: "red",
