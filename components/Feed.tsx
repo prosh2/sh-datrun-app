@@ -5,7 +5,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Post } from "./model/Post";
 import { FlatList, Text } from "react-native-gesture-handler";
 
-export default function FeedComponent() {
+export default function Feed() {
   const renderPost = ({ item }: { item: Post }) => (
     <View style={styles.card}>
       <View style={styles.header}>
@@ -16,7 +16,7 @@ export default function FeedComponent() {
       <Text style={styles.caption}>{item.caption}</Text>
       <View style={styles.stats}>
         <Text style={styles.statText}>🏃 {item.distance}</Text>
-        <Text style={styles.statText}>⏱️ {item.datetime}</Text>
+        <Text style={styles.statText}>⏱️ {item.duration}</Text>
         <Text style={styles.statText}>📍 {item.location}</Text>
       </View>
       <View style={styles.actions}>

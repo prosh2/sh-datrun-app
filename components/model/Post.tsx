@@ -1,13 +1,14 @@
 export interface Post {
   id: string;
   name: string;
-  distance: string;
-  likes: number;
+  caption: string;
   comments: number; // Optional property for comments
+  distance: string;
+  datetime: string; // Optional property for the date of the post
+  duration: string; // Optional property for the duration of the run in seconds
+  likes: number;
   location: string;
   photo: any; // You can use ImageSourcePropType from 'react-native' for stricter typing
-  caption: string;
   pace: string; // Optional property for pace
-  datetime: string; // Optional property for the date of the post
   toJSON(): object;
 }

@@ -1,4 +1,4 @@
-import FeedComponent from "@/components/FeedComponent";
+import Feed from "@/components/Feed";
 import { getUserContext } from "@/contexts/UserContext";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
@@ -21,7 +21,7 @@ export default function HomeScreen() {
           />
         </Pressable>
       </View>
-      <FeedComponent />
+      <Feed />
     </>
   );
 }

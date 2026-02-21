@@ -26,10 +26,6 @@ export default function StartRunScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const navigation = useNavigation<StartRunNav>();
 
-  if (Platform.OS === "web") {
-    return <StartRunFallback />;
-  }
-
   const fetchLocation = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -61,6 +57,10 @@ export default function StartRunScreen() {
   useEffect(() => {
     fetchLocation();
   }, []);
+
+  if (Platform.OS === "web") {
+    return <StartRunFallback />;
+  }
 
   const handleStartRun = () => {
     if (location) {
